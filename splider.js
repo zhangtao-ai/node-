@@ -4,8 +4,23 @@
 */
 const http = require('https')
 const fs = require('fs')
-let url = 'https://www.bilibili.com/'
+let url = 'https://lol.qq.com/main.shtml'
+let json = 'http://nodejs.cn/index.json'
 http.get(url,(res)=>{
+    //安全判断
+    const { statusCode } = res;
+    const contentType = res.headers['content-type'];
+    let err = null
+    if(statusCode!=200){
+        err = new Error('请求状态错误')
+    }else if(!/^text\/html/.test(contentType)){
+        err = new Error('请求类型错误')
+    }
+    if(err){
+        console.log(err)
+        res.resume()//重置缓存
+        return false
+    }
     //数据分段 只要接受数据就会触发data 事件 chunk 每次接受的数据片段
     let rawData=''
     res.on('data',(chunk)=>{
