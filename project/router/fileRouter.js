@@ -8,7 +8,9 @@ var stroage = multer.diskStorage({
     },
     // 给上传文件重命名，获取添加后缀名
     filename: function(req, file, cb) {
-        let ext = file.originalname.split('.')[1]
+        //获得源文件的后缀名
+        let exts = file.originalname.split('.')
+        let ext =  exts[exts.length-1]
         let tmpname = (new Date()).getTime()+parseInt(Math.random()*9999)
         cb(null, `${tmpname}.${ext}`)
     }
@@ -18,8 +20,8 @@ let upload = multer({
 })
 
 router.post('/upload',upload.single('file'),(req,res)=>{
-    //haha 要上传图片数据的key值 必须前后端统一
-    // console.log(req.file)
+    // 要上传图片数据的key值 必须前后端统一
+    console.log(req.file)
     let {size,mimetype,path} = req.file
     let types=['jpg','jpeg','png','gif'] //允许上传的类型
     let tmpType=mimetype.split('/')[1]
