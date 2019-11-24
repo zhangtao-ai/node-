@@ -66,12 +66,18 @@ router.post('/update',(req,res)=>{
 router.post('/getInfoByPage',(req,res)=>{
     let pageSize = req.body.pageSize || 5 //设置默认值
     let page = req.body.page || 1
-    foodModel.find().limit(Number(pageSize)).skip(Number((page-1)*pageSize))
+    let count = 0
+    foodModel.find()
     .then((data)=>{
-        res.send({list:data})
+        count = data.length //获取总的数据条数
+        return  foodModel.find().limit(Number(pageSize)).skip(Number((page-1)*pageSize))
+    })
+    .then((data)=>{
+        let allpage = Math.ceil(count/pageSize)
+        res.send({err:0,msg:'ok',info:{list:data,count:count,allpage:allpage}})
     })
     .catch(()=>{
-        res.send({err:-1,msg:'删除失败'})
+        res.send({err:-1,msg:'修改失败'})
     })
 })
 module.exports = router
